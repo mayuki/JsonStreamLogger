@@ -6,6 +6,7 @@ using System.IO;
 
 namespace JsonStreamLogger
 {
+    [ProviderAlias("JsonStream")]
     public class JsonStreamLoggerProvider : ILoggerProvider, IDisposable
     {
         private readonly JsonStreamLoggerBroker _broker;
