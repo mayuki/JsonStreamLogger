@@ -7,8 +7,9 @@ JSON Stream logger provider implementation for Microsoft.Extensions.Logging.
 ```csharp
 serviceCollection.AddLogging(options =>
 {
-    options.AddConsole();
-    options.AddJsonStream();
+    // Enable JsonStreamLogger logger provider
+    // By default, logger writes JSON to stdout stream.
+    options.AddJsonStream(); 
 });
 ```
 
