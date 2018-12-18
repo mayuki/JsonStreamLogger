@@ -2,7 +2,14 @@
 
 JSON Stream logger provider implementation for Microsoft.Extensions.Logging.
 
-## Usage & example
+## Install
+https://www.nuget.org/packages/JsonStreamLogger
+
+```
+dotnet add package JsonStreamLogger
+```
+
+## Usage and output samples
 
 ```csharp
 serviceCollection.AddLogging(options =>
