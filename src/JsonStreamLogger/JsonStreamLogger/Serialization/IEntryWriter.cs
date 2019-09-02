@@ -5,6 +5,6 @@ namespace JsonStreamLogger.Serialization
 {
     public interface IEntryWriter
     {
-        ValueTask WriteEntryAsync(LogEntry entry, CancellationToken cancellationToken);
+        ValueTask WriteEntryAsync(in LogEntry entry, CancellationToken cancellationToken);
     }
 }

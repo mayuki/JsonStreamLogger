@@ -4,7 +4,7 @@ using System.Collections.Generic;
 
 namespace JsonStreamLogger
 {
-    public sealed class LogEntry
+    public readonly struct LogEntry
     {
         public string Category { get; }
         public LogLevel LogLevel { get; }

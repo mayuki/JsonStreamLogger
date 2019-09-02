@@ -26,7 +26,7 @@ namespace JsonStreamLogger.Serialization
             });
         }
 
-        public ValueTask WriteEntryAsync(LogEntry entry, CancellationToken cancellationToken)
+        public ValueTask WriteEntryAsync(in LogEntry entry, CancellationToken cancellationToken)
         {
             WriteLogEntry(_writer, entry);
 
@@ -38,7 +38,7 @@ namespace JsonStreamLogger.Serialization
             return new ValueTask(_stream.FlushAsync(cancellationToken));
         }
 
-        private static void WriteLogEntry(Utf8JsonWriter writer, LogEntry entry)
+        private static void WriteLogEntry(Utf8JsonWriter writer, in LogEntry entry)
         {
             writer.WriteStartObject();
             {

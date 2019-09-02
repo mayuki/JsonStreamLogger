@@ -34,7 +34,7 @@ namespace JsonStreamLogger.Internal
             });
         }
 
-        public void Post(LogEntry entry)
+        public void Post(in LogEntry entry)
         {
             while (!_channel.Writer.TryWrite(entry))
             {
@@ -55,14 +55,23 @@ namespace JsonStreamLogger.Internal
 
                 while (!_cts.IsCancellationRequested)
                 {
-                    if (!await _channel.Reader.WaitToReadAsync(_cts.Token))
+                    try
                     {
-                        return;
-                    }
+                        if (!await _channel.Reader.WaitToReadAsync(_cts.Token))
+                        {
+                            return;
+                        }
 
-                    while (_channel.Reader.TryRead(out var entry))
+                        while (_channel.Reader.TryRead(out var entry))
+                        {
+                            await writer.WriteEntryAsync(in entry, _cts.Token);
+                        }
+                    }
+                    catch (OperationCanceledException)
                     {
-                        await writer.WriteEntryAsync(entry, _cts.Token);
+                    }
+                    catch (Exception)
+                    {
                     }
                 }
             }, _cts.Token);
