@@ -1,0 +1,106 @@
+﻿using System;
+using System.Collections.Generic;
+using System.IO;
+using System.Text;
+using System.Text.Json;
+using System.Threading;
+using System.Threading.Tasks;
+
+namespace JsonStreamLogger.Serialization
+{
+    public class SystemTextJsonEntryWriter : IEntryWriter
+    {
+        private readonly Stream _stream;
+        private readonly Utf8JsonWriter _writer;
+
+        public SystemTextJsonEntryWriter(Stream stream)
+        {
+            _stream = stream;
+            _writer = new Utf8JsonWriter(stream, new JsonWriterOptions
+            {
+#if !DEBUG
+                SkipValidation = true,
+#endif
+                Indented = false,
+            });
+        }
+
+        public async ValueTask WriteEntryAsync(LogEntry entry, CancellationToken cancellationToken)
+        {
+            WriteLogEntry(_writer, entry);
+
+            await _writer.FlushAsync(cancellationToken);
+        }
+
+        private static void WriteLogEntry(Utf8JsonWriter writer, LogEntry entry)
+        {
+            writer.WriteStartObject();
+            {
+                writer.WriteString("Category", entry.Category);
+                writer.WriteNumber("LogLevel", (int)entry.LogLevel);
+                writer.WriteNumber("EventId", entry.EventId.Id);
+                writer.WritePropertyName("State");
+                {
+                    WriteState(writer, entry.State);
+                }
+                writer.WritePropertyName("Exception");
+                {
+                    WriteException(writer, entry.Exception);
+                }
+                writer.WriteString("Message", entry.Message);
+            }
+            writer.WriteEndObject();
+        }
+
+        private static void WriteState(Utf8JsonWriter writer, IReadOnlyList<KeyValuePair<string, object>> state)
+        {
+            if (state == null)
+            {
+                writer.WriteNullValue();
+            }
+            else
+            {
+                writer.WriteStartObject();
+                {
+                    foreach (var keyValue in state)
+                    {
+                        writer.WritePropertyName(keyValue.Key);
+                        {
+                            if (keyValue.Value == null)
+                            {
+                                writer.WriteNullValue();
+                            }
+                            else
+                            {
+                                JsonSerializer.Serialize(writer, keyValue.Value, keyValue.Value.GetType());
+                            }
+                        }
+                    }
+                }
+                writer.WriteEndObject();
+            }
+        }
+
+        private static void WriteException(Utf8JsonWriter writer, Exception ex)
+        {
+            if (ex == null)
+            {
+                writer.WriteNullValue();
+            }
+            else
+            {
+                writer.WriteStartObject();
+                {
+                    writer.WriteString("Name", ex.GetType().FullName);
+                    writer.WriteString("Message", ex.Message);
+                    writer.WriteString("StackTrace", ex.StackTrace);
+                    writer.WritePropertyName("InnerException");
+                    {
+                        WriteException(writer, ex.InnerException);
+                    }
+                }
+                writer.WriteEndObject();
+            }
+        }
+    }
+}

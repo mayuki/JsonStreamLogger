@@ -14,6 +14,6 @@ namespace JsonStreamLogger
 
         public TimeSpan ShutdownDelay { get; set; } = TimeSpan.FromMilliseconds(150);
 
-        public Func<Stream, IEntryWriter> WriterFactory { get; set; } = (stream) => new JsonNetEntryWriter(stream);
+        public Func<Stream, IEntryWriter> WriterFactory { get; set; } = (stream) => new SystemTextJsonEntryWriter(stream);
     }
 }
