@@ -12,6 +12,7 @@ namespace JsonStreamLogger.Serialization
     {
         private readonly Stream _stream;
         private readonly Utf8JsonWriter _writer;
+        private static readonly byte[] _newLine = new byte[] { 0x0a /* \n */ };
 
         public SystemTextJsonEntryWriter(Stream stream)
         {
@@ -25,11 +26,16 @@ namespace JsonStreamLogger.Serialization
             });
         }
 
-        public async ValueTask WriteEntryAsync(LogEntry entry, CancellationToken cancellationToken)
+        public ValueTask WriteEntryAsync(LogEntry entry, CancellationToken cancellationToken)
         {
             WriteLogEntry(_writer, entry);
 
-            await _writer.FlushAsync(cancellationToken);
+            // Each JSON log entry is expected to be single-line.
+            _writer.Flush();
+            _stream.Write(_newLine, 0, 1);
+            _writer.Reset();
+
+            return new ValueTask(_stream.FlushAsync(cancellationToken));
         }
 
         private static void WriteLogEntry(Utf8JsonWriter writer, LogEntry entry)
