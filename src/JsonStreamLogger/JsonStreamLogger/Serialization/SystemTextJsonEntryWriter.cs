@@ -47,7 +47,14 @@ namespace JsonStreamLogger.Serialization
                 writer.WriteNumber("EventId", entry.EventId.Id);
                 writer.WritePropertyName("State");
                 {
-                    WriteState(writer, entry.State);
+                    if (entry.State is IReadOnlyList<KeyValuePair<string, object>> keyValuePairs)
+                    {
+                        WriteState(writer, keyValuePairs);
+                    }
+                    else
+                    {
+                        WriteState(writer, entry.State);
+                    }
                 }
                 writer.WritePropertyName("Exception");
                 {
@@ -56,6 +63,18 @@ namespace JsonStreamLogger.Serialization
                 writer.WriteString("Message", entry.Message);
             }
             writer.WriteEndObject();
+        }
+
+        private static void WriteState(Utf8JsonWriter writer, object state)
+        {
+            if (state == null)
+            {
+                writer.WriteNullValue();
+            }
+            else
+            {
+                JsonSerializer.Serialize(writer, state, state.GetType());
+            }
         }
 
         private static void WriteState(Utf8JsonWriter writer, IReadOnlyList<KeyValuePair<string, object>> state)

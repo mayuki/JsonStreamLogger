@@ -30,7 +30,7 @@ namespace JsonStreamLogger
         public void Log<TState>(LogLevel logLevel, EventId eventId, TState state, Exception exception, Func<TState, Exception, string> formatter)
         {
             var message = formatter(state, exception);
-            _broker.Post(new LogEntry(_categoryName, logLevel, eventId, state as IReadOnlyList<KeyValuePair<string, object>>, exception, message));
+            _broker.Post(new LogEntry(_categoryName, logLevel, eventId, state, exception, message));
         }
     }
 }
