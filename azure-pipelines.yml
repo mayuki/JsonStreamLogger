@@ -48,7 +48,9 @@ steps:
     ArtifactName: 'drop'
     publishLocation: 'Container'
 
+# Publish to NuGet.org (Pull request or Release)
 - task: NuGetCommand@2
+  condition: or(eq(variables['Build.Reason'], 'PullRequest'), contains(variables['Build.SourceBranch'], 'tags'))
   inputs:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.snupkg'
