@@ -4,22 +4,53 @@
 # https://aka.ms/yaml
 
 trigger:
-  - master
+  branches:
+    include:
+      - master
+  tags:
+    include:
+      - v*
 
 pool:
   vmImage: 'ubuntu-latest'
 
 steps:
-
 - task: UseDotNet@2
   inputs:
     packageType: 'sdk'
     version: '3.0.100'
 
+# Publish as preview package (not tag and pull request)
 - task: DotNetCoreCLI@2
+  condition: and(not(contains(variables['Build.SourceBranch'], 'tags')), ne(variables['Build.Reason'], 'PullRequest'))
   inputs:
     command: 'pack'
-    packagesToPack: 'src/JsonStreamLogger/*.csproj'
+    packagesToPack: 'src/JsonStreamLogger/JsonStreamLogger/*.csproj'
     includesymbols: true
     includesource: true
-    versioningScheme: 'byBuildNumber'
+    versioningScheme: 'off'
+    buildProperties: 'VersionSuffix=preview.$(Build.BuildNumber);SymbolPackageFormat=snupkg'
+
+# Publish as release package (tagged)
+- task: DotNetCoreCLI@2
+  condition: contains(variables['Build.SourceBranch'], 'tags')
+  inputs:
+    command: 'pack'
+    packagesToPack: 'src/JsonStreamLogger/JsonStreamLogger/*.csproj'
+    includesymbols: true
+    includesource: true
+    versioningScheme: 'off'
+    buildProperties: 'SymbolPackageFormat=snupkg'
+
+- task: PublishBuildArtifacts@1
+  inputs:
+    PathtoPublish: '$(Build.ArtifactStagingDirectory)'
+    ArtifactName: 'drop'
+    publishLocation: 'Container'
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;!$(Build.ArtifactStagingDirectory)/**/*.snupkg'
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'NuGet.org (mayuki)'
