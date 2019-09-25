@@ -53,7 +53,7 @@ namespace JsonStreamLogger.Serialization
                     }
                     else
                     {
-                        WriteState(writer, entry.State);
+                        WriteState(writer, entry.State!);
                     }
                 }
                 writer.WritePropertyName("Exception");

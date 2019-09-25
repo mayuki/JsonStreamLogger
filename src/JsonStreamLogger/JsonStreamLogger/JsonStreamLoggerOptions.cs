@@ -8,7 +8,7 @@ namespace JsonStreamLogger
 {
     public class JsonStreamLoggerOptions
     {
-        public Stream OutputStream { get; set; }
+        public Stream? OutputStream { get; set; }
 
         public int BufferSize { get; set; } = 1024;
 

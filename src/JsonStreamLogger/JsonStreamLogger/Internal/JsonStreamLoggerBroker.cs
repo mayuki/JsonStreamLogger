@@ -16,7 +16,7 @@ namespace JsonStreamLogger.Internal
         private readonly TimeSpan _shutdownDelay;
 
         private int _isRunning;
-        private Task _writerTask;
+        private Task? _writerTask;
 
         public JsonStreamLoggerBroker(Stream stream, int bufferSize, Func<Stream, IEntryWriter> writerFactory, TimeSpan shutdownDelay)
         {
