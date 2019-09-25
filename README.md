@@ -7,8 +7,8 @@ JSON Stream logger provider implementation for Microsoft.Extensions.Logging.
 
 ## Requirements
 - Compatible with .NET Standard 2.0
-    - .NET Core 3.0
-    - .NET Core 2.2
+    - .NET Core 3.0 (Windows, Linux, macOS)
+    - .NET Core 2.2 (Windows, Linux, macOS)
     - .NET Framework 4.6.1
 
 ## Install
