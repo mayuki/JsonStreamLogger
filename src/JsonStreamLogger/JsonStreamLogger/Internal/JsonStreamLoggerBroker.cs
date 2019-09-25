@@ -16,7 +16,7 @@ namespace JsonStreamLogger.Internal
         private readonly TimeSpan _shutdownDelay;
 
         private int _isRunning;
-        private Task _writerTask;
+        private Task? _writerTask;
 
         public JsonStreamLoggerBroker(Stream stream, int bufferSize, Func<Stream, IEntryWriter> writerFactory, TimeSpan shutdownDelay)
         {
@@ -34,7 +34,7 @@ namespace JsonStreamLogger.Internal
             });
         }
 
-        public void Post(LogEntry entry)
+        public void Post(in LogEntry entry)
         {
             while (!_channel.Writer.TryWrite(entry))
             {
@@ -55,14 +55,23 @@ namespace JsonStreamLogger.Internal
 
                 while (!_cts.IsCancellationRequested)
                 {
-                    if (!await _channel.Reader.WaitToReadAsync(_cts.Token))
+                    try
                     {
-                        return;
-                    }
+                        if (!await _channel.Reader.WaitToReadAsync(_cts.Token))
+                        {
+                            return;
+                        }
 
-                    while (_channel.Reader.TryRead(out var entry))
+                        while (_channel.Reader.TryRead(out var entry))
+                        {
+                            await writer.WriteEntryAsync(in entry, _cts.Token);
+                        }
+                    }
+                    catch (OperationCanceledException)
                     {
-                        await writer.WriteEntryAsync(entry, _cts.Token);
+                    }
+                    catch (Exception)
+                    {
                     }
                 }
             }, _cts.Token);

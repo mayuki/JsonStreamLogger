@@ -8,7 +8,7 @@ namespace Microsoft.Extensions.Logging
 {
     public static class LoggingBuilderExtensions
     {
-        public static ILoggingBuilder AddJsonStream(this ILoggingBuilder builder, Action<JsonStreamLoggerOptions> configure = null)
+        public static ILoggingBuilder AddJsonStream(this ILoggingBuilder builder, Action<JsonStreamLoggerOptions>? configure = null)
         {
             var options = new JsonStreamLoggerOptions();
             configure?.Invoke(options);
