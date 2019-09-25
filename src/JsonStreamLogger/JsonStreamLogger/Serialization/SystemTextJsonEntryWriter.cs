@@ -30,7 +30,8 @@ namespace JsonStreamLogger.Serialization
         {
             WriteLogEntry(_writer, entry);
 
-            // Each JSON log entry is expected to be single-line.
+            // NOTE: Each JSON log entry is expected to be single-line.
+            // Flush and reset internal buffer in Utf8JsonWriter here.
             _writer.Flush();
             _stream.Write(_newLine, 0, 1);
             _writer.Reset();
