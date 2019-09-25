@@ -2,6 +2,12 @@
 
 JSON Stream logger provider implementation for Microsoft.Extensions.Logging.
 
+## Requirements
+- Compatible with .NET Standard 2.0
+    - .NET Core 3.0
+    - .NET Core 2.2
+    - .NET Framework 4.6.1
+
 ## Install
 https://www.nuget.org/packages/JsonStreamLogger
 
