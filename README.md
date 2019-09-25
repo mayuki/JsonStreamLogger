@@ -1,5 +1,8 @@
 # JsonStreamLogger
 
+[![Build Status](https://dev.azure.com/misuzilla/JsonStreamLogger/_apis/build/status/mayuki.JsonStreamLogger?branchName=master)](https://dev.azure.com/misuzilla/JsonStreamLogger/_build/latest?definitionId=17&branchName=master) 
+[![NuGet](https://img.shields.io/nuget/v/JsonStreamLogger?style=plastic)](https://www.nuget.org/packages/JsonStreamLogger)
+
 JSON Stream logger provider implementation for Microsoft.Extensions.Logging.
 
 ## Requirements
