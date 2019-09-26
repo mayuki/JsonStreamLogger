@@ -9,7 +9,7 @@
     <PackageProjectUrl>https://github.com/mayuki/JsonStreamLogger</PackageProjectUrl>
     <RepositoryUrl>https://github.com/mayuki/JsonStreamLogger</RepositoryUrl>
     <PackageTags>logging</PackageTags>
-    <VersionPrefix>0.3.0</VersionPrefix>
+    <VersionPrefix>0.3.1</VersionPrefix>
     <LangVersion>8.0</LangVersion>
     <Nullable>enable</Nullable>
   </PropertyGroup>
