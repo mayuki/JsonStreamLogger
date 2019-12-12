@@ -1,4 +1,4 @@
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -13,6 +13,7 @@ namespace JsonStreamLogger.Serialization
         private readonly Stream _stream;
         private readonly Utf8JsonWriter _writer;
         private static readonly byte[] _newLine = new byte[] { 0x0a /* \n */ };
+        private const string OriginalFormatKey = "{OriginalFormat}";
 
         public SystemTextJsonEntryWriter(Stream stream)
         {
@@ -90,6 +91,8 @@ namespace JsonStreamLogger.Serialization
                 {
                     foreach (var keyValue in state)
                     {
+                        if (keyValue.Key == OriginalFormatKey) continue;
+
                         writer.WritePropertyName(keyValue.Key);
                         {
                             if (keyValue.Value == null)
