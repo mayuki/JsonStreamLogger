@@ -1,4 +1,4 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Text;
@@ -107,7 +107,7 @@ namespace JsonStreamLogger.Serialization
             }
         }
 
-        private static void WriteException(Utf8JsonWriter writer, Exception ex)
+        private static void WriteException(Utf8JsonWriter writer, Exception? ex)
         {
             if (ex == null)
             {

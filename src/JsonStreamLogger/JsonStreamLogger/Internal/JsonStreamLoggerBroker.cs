@@ -53,6 +53,17 @@ namespace JsonStreamLogger.Internal
             {
                 var writer = _writerFactory(_stream);
 
+#if NETCOREAPP3_0
+                await foreach (var entry in _channel.Reader.ReadAllAsync(_cts.Token))
+                {
+                    try
+                    {
+                        await writer.WriteEntryAsync(entry, _cts.Token);
+                    }
+                    catch (OperationCanceledException) { }
+                    catch (Exception) { }
+                }
+#else
                 while (!_cts.IsCancellationRequested)
                 {
                     try
@@ -67,13 +78,10 @@ namespace JsonStreamLogger.Internal
                             await writer.WriteEntryAsync(in entry, _cts.Token);
                         }
                     }
-                    catch (OperationCanceledException)
-                    {
-                    }
-                    catch (Exception)
-                    {
-                    }
+                    catch (OperationCanceledException) { }
+                    catch (Exception) { }
                 }
+#endif
             }, _cts.Token);
         }
 
